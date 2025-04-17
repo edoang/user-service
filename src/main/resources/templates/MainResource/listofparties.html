@@ -1,0 +1,101 @@
+{@java.lang.Integer won}
+{@java.lang.Integer lost}
+{@java.lang.Boolean activeGame}
+<div id="listofparties">
+    <p style="font-size:180%; color:orange;">.:: Overall :: Won: {won} :: Lost: {lost} ::.</p>
+    <button hx-get="/quarkus-gate/get"
+            hx-target="#listofparties"
+            hx-swap="outerHTML"
+            type="button"
+            style="margin-bottom: 10px; padding: 10px;
+
+             border: none;
+              border-radius: 5px; cursor: pointer;">
+        Update battles
+    </button>
+    <table style="padding: .115rem; min-width: 1400px;">
+        <thead>
+        <tr>
+            <!--            <th>ID</th>-->
+            <!--            <th>Hero</th>-->
+            <th>-_-</th>
+            <th>•̀_•́</th>
+            <th>Armour</th>
+            <th>Weapon</th>
+            <th>Level</th>
+            <th>Health</th>
+            <th>What?</th>
+        </tr>
+        </thead>
+        {#for i in parties}
+            <tr>
+                <!--            <td>{i.id}</td>-->
+                <!--            <td>{i.heroName}</td>-->
+                <td>
+                    {#if i.fighting}
+                        <img src="/images/{i.heroName}-fight.png" alt="{i.heroName} fight"
+                             style="width: auto; height: 270px; filter: none;">
+                    {#else}
+                        {#if i.health < 1}
+                            <img src="/images/{i.heroName}-fight.png" alt="{i.heroName} fight"
+                                 style="width: 190px; height: auto; filter: grayscale(100%);">
+                        {#else}
+                            <img src="/images/{i.heroName}-fight.png" alt="{i.heroName} fight"
+                                 style="width: 190px; height: auto; filter: none;">
+                        {/if}
+                    {/if}
+
+                </td>
+                <td style="text-align: center;">
+                    {#if i.villain}
+                        <img src="/images/{i.villain}.png" alt=""
+                             style="width: auto; height: 200px; filter: none;">
+                    {/if}
+                </td>
+                <td><img src="/images/armours/{i.armour}.png" alt=""
+                         style="width: auto; height: 100px; filter: none;"></td>
+                <td><img src="/images/weapons/{i.weapon}.png" alt=""
+                         style="width: auto; height: 100px; filter: none;"></td>
+                <td class="level-cell">{i.level}</td>
+                <td>
+                    {#if i.health > 0}
+                        <div class="health-indicator
+                    {#if i.health <= 20 }
+                    low-health
+                    {#else if i.health <= 50 }
+                    medium-health
+                    {#else  }
+                    green
+                    {/if}" id="health-indicator">
+                            {i.health}
+                        </div>
+                    {#else}
+                        <img src="/images/Downed.png" alt=""
+                             style="width: auto; height: 130px; filter: none;">
+                    {/if}
+                </td>
+
+                <td>
+                    <form hx-target="#parties"
+                          hx-post="/quarkus-gate/fight">
+                        <input type="hidden" name="partyMemberId" value="{i.id}"/>
+
+                        {#if activeGame && i.health > 0}
+                            <button type="submit"
+                                    style="background-color: rgba(0,0,0,0.53); font-size: 28px; font-family: Uncial Antiqua, serif; padding: 15px 30px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px;"
+                            {#if i.fighting} disabled {/if}>
+                                <img src="/images/{i.heroName}-fight-icon.png" alt="Fight"
+                                     style="width: 80px; height: 80px;">
+                            </button>
+                        {/if}
+                    </form>
+                </td>
+            </tr>
+        {/for}
+    </table>
+
+</div>
+<script>
+
+
+</script>

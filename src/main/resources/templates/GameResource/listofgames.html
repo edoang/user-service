@@ -1,0 +1,40 @@
+{@org.acme.users.model.Game[] games}
+{@java.lang.Boolean activeGame}
+
+<form hx-post="/quarkus-gate/game/play" hx-target="#games">
+    <input type="submit"  style="width: 80px; height: 80px; font-size: 28px" value="Play"  {#if activeGame} disabled {/if} '/>
+</form>
+
+<div id="listofgames">
+    <table style="padding: .115rem;">
+        <thead>
+        <tr>
+<!--            <th>ID</th>-->
+            <th>won</th>
+            <th>lost</th>
+<!--            <th>created</th>-->
+<!--            <th>userId</th>-->
+            <th>This Game</th>
+        </tr>
+        </thead>
+        {#for i in games}
+        <tr>
+<!--            <td>{i.id}</td>-->
+            <td style="font-size:180%; color:orange;">{i.won}</td>
+            <td style="font-size:180%; color:orange;">{i.lost}</td>
+<!--            <td>{i.created}</td>-->
+<!--            <td>{i.userId}</td>-->
+            <td>
+                <form hx-target="#games"
+                      hx-post="/quarkus-gate/game/over">
+                    <input type="hidden" name="id" value="{i.id}"/>
+
+                    {#if !i.over}
+                    <input type="submit" value="Game Over">
+                    {/if}
+                </form>
+            </td>
+        </tr>
+        {/for}
+    </table>
+</div>

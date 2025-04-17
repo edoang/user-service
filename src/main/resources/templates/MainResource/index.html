@@ -1,0 +1,247 @@
+{@java.lang.String name}
+{@java.lang.Integer won}
+{@java.lang.Integer lost}
+{@java.lang.Integer rank}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Quarkus Gate</title>
+    <!--    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">-->
+    <link rel="stylesheet" href="/css/simple.min.css">
+    <script src="https://unpkg.com/htmx.org@1.7.0"></script>
+    <style>
+
+        /*@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');*/
+        @font-face {
+            font-family: 'Uncial Antiqua';
+            src: url('/fonts/UncialAntiqua-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        td.level-cell {
+            font-size: 250%;
+            font-family: 'Uncial Antiqua', serif;
+            color: orange;
+            text-shadow: 0 0 5px rgba(255, 165, 0, 0.8), 0 0 15px rgba(255, 140, 0, 1); /* Luce magica */
+            vertical-align: middle;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        td.level-cell::before {
+            content: " ";
+            color: gold;
+            font-size: 120%;
+        }
+
+        td.level-cell::after {
+            content: " ";
+            color: gold;
+            font-size: 120%;
+        }
+
+        td {
+            text-align: center;
+            vertical-align: middle;
+            text-align: -webkit-center;
+        }
+
+        .health-indicator {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #2a0000, #0a0000);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Uncial Antiqua", serif;
+            font-size: 30px;
+            font-weight: bold;
+            color: #d4af37;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.5);
+            border: 3px solid #800000;
+            animation: pulse 2s infinite;
+        }
+
+        .health-indicator.green {
+            border: 3px solid #013220;
+            background: radial-gradient(circle, #003b00, #001a00);
+            box-shadow: 0 0 15px rgba(0, 50, 0, 0.8), inset 0 0 10px rgba(0, 100, 0, 0.5);
+            animation: none;
+
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.8),
+                inset 0 0 15px rgba(255, 0, 0, 0.6);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 25px rgba(0, 0, 0, 0.9),
+                inset 0 0 20px rgba(255, 0, 0, 0.9);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.8),
+                inset 0 0 10px rgba(255, 0, 0, 0.5);
+            }
+        }
+
+        .low-health {
+            background: radial-gradient(circle, #800000, #4d0000);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.9), inset 0 0 5px rgba(139, 0, 0, 0.8);
+            color: #ff4500;
+            text-shadow: 0 0 15px rgba(255, 69, 0, 1);
+        }
+
+        .medium-health {
+            background: radial-gradient(circle, #ff9100, #803a00);
+            box-shadow: 0 0 12px rgba(255, 165, 0, 0.8), inset 0 0 5px rgba(255, 140, 0, 0.5);
+            color: #ffae42;
+        }
+
+        .high-health {
+            background: radial-gradient(circle, #006400, #013220);
+            box-shadow: 0 0 15px rgba(34, 139, 34, 0.8), inset 0 0 8px rgba(173, 255, 47, 0.5);
+            color: #adff2f;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            --accent-bg: black;
+            background-color: black;
+        }
+
+        main {
+            display: flex;
+            margin-top: 50px;
+            flex: 1;
+            background-color: black;
+        }
+
+        section {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 0 10px;
+        }
+
+        #gamez {
+            flex: 100 0 10%;
+        }
+
+        #partiez {
+            flex: 0 0 60%;
+        }
+
+        #campz {
+            flex: 0 0 30%;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            section {
+                margin-bottom: 20px;
+                flex: 1 1 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main>
+
+    <section id="gamez">
+        <img src="/images/quarkus-gate.png" alt="Quarkus Gate" width="90%" height="90%">
+        <p style="font-size:200%;">User: {name}</p>
+        <p><a href="/quarkus-gate/exit" style="font-size: 28px">EXIT</a></p>
+        <p style="font-size:200%;">Ranking: {rank}</p>
+        <div id="games" hx-get="/quarkus-gate/game/get"
+             hx-trigger="load, update-available-games-list from:body, update-available-heroes-list from:body">
+        </div>
+    </section>
+
+    <section id="partiez">
+        <h2>Party</h2>
+        <div id="parties" hx-get="/quarkus-gate/get"
+             hx-trigger="load, update-available-parties-list from:body, update-all from:body">
+        </div>
+        <div id="message-log"
+             style="margin-top: 20px; padding: 10px; background-color: black; border: 1px solid #cccccc; border-radius: 5px;
+            max-height: 200px; max-width: 1400px; overflow-y: auto; font-family: Arial, sans-serif; font-size: 22px;">
+            <h4 style="margin: 0 0 10px; color: white;">Fights:</h4>
+            <ul id="log-list" style="padding: 0; margin: 0; list-style: none; color: white;"></ul>
+        </div>
+    </section>
+
+    <section id="campz">
+        <h2>Camp</h2>
+        <div id="availability" hx-get="/quarkus-gate/available"
+             hx-trigger="load, update-available-heroes-list from:body, update-all from:body "
+             hx-include="">
+        </div>
+    </section>
+
+</main>
+
+<script>
+    // start connection with SSE
+    const eventSourceQG = new EventSource("/quarkus-gate/notifications/sse");
+    const logList = document.getElementById("log-list");
+
+
+    // battle update event
+    eventSourceQG.onmessage = function (event) {
+        if (event.data.startsWith("battle-update:")) {
+            const logEntry = document.createElement("li");
+            logEntry.style.padding = "5px 0";
+            logEntry.style.borderBottom = "0px solid #e0e0e0";
+            const randomPastelColor = () => {
+                const r = Math.floor((Math.random() * 127) + 127);
+                const g = Math.floor((Math.random() * 127) + 127);
+                const b = Math.floor((Math.random() * 127) + 127);
+                return `rgb(` + r + `, ` + g + `, ` + b + `)`;
+            };
+
+            logEntry.style.color = randomPastelColor();
+
+            console.log("Update party member table: sending 'update-available-parties-list'...");
+            setTimeout(() => {
+                document.body.dispatchEvent(new CustomEvent("update-available-parties-list"));
+                document.body.dispatchEvent(new CustomEvent("update-available-games-list"));
+                console.log("sent 'update-available-parties-list'");
+                const battleData = event.data.substring("battle-update:".length);
+                logEntry.innerHTML = `` + battleData;
+                logList.appendChild(logEntry);
+                const messageLogDiv = document.getElementById("message-log");
+                messageLogDiv.scrollTop = messageLogDiv.scrollHeight;
+
+            }, 350);
+        } else {
+            console.log("update from server ignored data=" + event.data);
+        }
+    };
+
+    eventSourceQG.onerror = function (error) {
+        console.error("Errore receiving SSE events: ", error);
+    };
+
+
+</script>
+</body>
+</html>
