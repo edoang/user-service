@@ -64,6 +64,7 @@ public class GameResource {
      * and fetches all games that are not marked as over. It then returns a
      * TemplateInstance for rendering the list of games, along with a header indicating
      * that the client should update its content after rendering.
+     * Emits the update-all event after the htmx swap
      *
      * @return A RestResponse containing a TemplateInstance, which renders the list of
      * all games and indicates whether there is at least one active game.
@@ -102,6 +103,7 @@ public class GameResource {
      * - Marks the specified game as over using a remote call to the GameClient.
      * - Logs the completion of the game.
      * - Returns an updated list of games as a TemplateInstance wrapped in a RestResponse.
+     * - emits the update-all event after the htmx swap
      *
      * @param id The unique identifier of the game to be marked as over.
      * @return A RestResponse containing a TemplateInstance that renders the updated list of games.

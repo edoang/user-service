@@ -11,10 +11,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-import org.acme.users.model.FightRequest;
-import org.acme.users.model.Game;
-import org.acme.users.model.Hero;
-import org.acme.users.model.PartyMember;
+import org.acme.users.model.*;
 import org.acme.users.rest.client.BattleClient;
 import org.acme.users.rest.client.GameClient;
 import org.acme.users.rest.client.PartyMemberClient;
@@ -71,24 +68,33 @@ public class MainResource {
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance index() {
 
+        String username = securityContext.getUserPrincipal().getName();
+
         Integer won = battleClient.count(
-                securityContext.getUserPrincipal().getName(), true);
+                username, true);
 
         Integer lost = battleClient.count(
-                securityContext.getUserPrincipal().getName(), false);
+                username, false);
 
-        Integer rank = calculateRankingPosition(securityContext.getUserPrincipal().getName());
+        Integer rank = calculateRankingPosition(username);
 
         return Templates.index(won, lost,
-                securityContext.getUserPrincipal().getName(), rank);
+                username, rank);
+    }
+
+    @GET
+    @Path("keepalive")
+    public Response keepalive() {
+        return Response.status(Response.Status.OK)
+                .build();
     }
 
     @GET
     @Path("exit")
     public Response exit() {
-        String name = securityContext.getUserPrincipal().getName();
-        partyMemberClient.removeUserPartyMember(name);
-        gameClient.overUserGames(name);
+        String username = securityContext.getUserPrincipal().getName();
+        partyMemberClient.removeUserPartyMember(username);
+        gameClient.overUserGames(username);
         return Response.status(Response.Status.FOUND) // 302 Found
                 .location(URI.create(logoutPath))
                 .build();
@@ -98,13 +104,14 @@ public class MainResource {
     @Produces(MediaType.TEXT_HTML)
     @Path("/get")
     public TemplateInstance getParties() {
+        String username = securityContext.getUserPrincipal().getName();
         Collection<PartyMember> partiesCollection
                 = partyMemberClient.allPartyMembers();
         Integer won = battleClient.count(
-                securityContext.getUserPrincipal().getName(), true);
+                username, true);
 
         Integer lost = battleClient.count(
-                securityContext.getUserPrincipal().getName(), false);
+                username, false);
         Collection<Game> activeGames = gameClient.get(false);
         return Templates.listofparties(won, lost, partiesCollection, activeGames.size() >= 1);
     }
@@ -156,6 +163,28 @@ public class MainResource {
         }
 
         partyMemberClient.fight(new FightRequest(partyMemberId, activeGames.get(0).id));
+        return RestResponse.ResponseBuilder
+                .ok(getParties())
+                .header("HX-Trigger-After-Swap",
+                        "update-available-heroes-list")
+                .build();
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/heal")
+    public RestResponse<TemplateInstance> healMe(
+            @RestForm Long partyMemberId,
+            @RestForm Boolean healAll
+    ) {
+
+        List<Game> activeGames = (List<Game>) gameClient.get(false);
+
+        if (activeGames.size() != 1) {
+            throw new IllegalStateException("too many games dude.");
+        }
+
+        partyMemberClient.heal(new HealRequest(partyMemberId, activeGames.get(0).id, healAll));
         return RestResponse.ResponseBuilder
                 .ok(getParties())
                 .header("HX-Trigger-After-Swap",

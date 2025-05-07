@@ -3,6 +3,11 @@
 {@java.lang.Boolean activeGame}
 <div id="listofparties">
     <p style="font-size:180%; color:orange;">.:: Overall :: Won: {won} :: Lost: {lost} ::.</p>
+    {! - outerHTML è un valore specifico di `hx-swap`
+         che indica a HTMX di sostituire l'intero elemento (incluso il tag stesso)
+         con il contenuto restituito dal server.
+         In questo caso l'elemento sostituito ha l'id listofparties definito in hx-target
+    !}
     <button hx-get="/quarkus-gate/get"
             hx-target="#listofparties"
             hx-swap="outerHTML"
@@ -46,7 +51,7 @@
                     {/if}
 
                 </td>
-                <td style="text-align: center;">
+                <td style="text-align: center; min-width: 200px;">
                     {#if i.villain}
                         <img src="/images/{i.villain}.png" alt=""
                              style="width: auto; height: 200px; filter: none;">
@@ -85,6 +90,19 @@
                                     style="background-color: rgba(0,0,0,0.53); font-size: 28px; font-family: Uncial Antiqua, serif; padding: 15px 30px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px;"
                             {#if i.fighting} disabled {/if}>
                                 <img src="/images/{i.heroName}-fight-icon.png" alt="Fight"
+                                     style="width: 80px; height: 80px;">
+                            </button>
+                        {/if}
+                    </form>
+                    <form hx-target="#parties"
+                          hx-post="/quarkus-gate/heal">
+                        <input type="hidden" name="partyMemberId" value="{i.id}"/>
+                        <input type="hidden" name="healAll" value="{true}"/>
+                        {#if activeGame && i.health > 0}
+                            <button type="submit"
+                                    style="background-color: rgba(0,0,0,0.53); font-size: 28px; font-family: Uncial Antiqua, serif; padding: 15px 30px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px;"
+                            {#if i.health < 100} disabled {/if}>
+                                <img src="/images/heal-all.png" alt="Heal"
                                      style="width: 80px; height: 80px;">
                             </button>
                         {/if}

@@ -47,9 +47,10 @@ public class SseResource {
                                  @jakarta.ws.rs.core.Context Sse sse) {
         this.sse = sse;
         String userId = jwt.getName();
-        userClients.put(userId, eventSink);
-
-        Log.info("User registered for notifications: " + userId);
+        if (eventSink != null) {
+            userClients.put(userId, eventSink);
+            Log.info("User registered for notifications: " + userId);
+        }
 
     }
 

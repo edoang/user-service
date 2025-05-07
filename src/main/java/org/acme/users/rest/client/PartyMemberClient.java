@@ -3,7 +3,9 @@ package org.acme.users.rest.client;
 
 import io.quarkus.oidc.token.propagation.common.AccessToken;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import org.acme.users.model.FightRequest;
+import org.acme.users.model.HealRequest;
 import org.acme.users.model.Hero;
 import org.acme.users.model.PartyMember;
 import org.eclipse.microprofile.faulttolerance.Fallback;
@@ -35,6 +37,10 @@ public interface PartyMemberClient {
     @PUT
     @Path("fight")
     Void fight(FightRequest fightRequest);
+
+    @PUT
+    @Path("heal")
+    Response heal(HealRequest fightRequest);
 
     @GET
     @Path("availability")

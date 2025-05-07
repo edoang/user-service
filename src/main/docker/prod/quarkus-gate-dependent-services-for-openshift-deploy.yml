@@ -1572,7 +1572,8 @@ data:
               "keyUse": [
                 "ENC"],
               "certificate": [
-                "MIICozCCAYsCBgGSH2CBgjANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDDApjYXItcmVudGFsMB4XDTI0MDkyMzE0NTI1MVoXDTM0MDkyMzE0NTQzMVowFTETMBEGA1UEAwwKY2FyLXJlbnRhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMuFB8angaXPXosneMQp21a5Vwh9f7t75mInaHwaUuDtLoQgbonSdqmf8wUzJU22u8NvA8oieGmhS950RX26+oLEihS+2itYY523932P0sEj/sSGJZy/l8YGryWd++PL5sXISLSF+GhaTclymwhqXhqt+zzD07D4iEFx3bxbw7wCXNEqM29z4YD6+CcOIpB0dCuHtxC9/xB10FLBoiAcd4w2SOTIunHPOyNuB330QKJyhlH5PmbvurGUy/iBsM5K6p3tGtfoj0LfxKGSoNtYrijh3pHCMxJUW8DF5nDyiz06xfSEVqR3qG2aojds9GAWDKBqVJXZLRG8+B6AXlviqwkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAPACr490z5mCoT6uAp0tvEsR5Hqe4vj4e3dSAPk7jG5EB5n1SYvFHudsfmfwBwArLkDNywlIEFjGzVM7J9+JD0UHA3xP3XkkT7UdgDuKvbaCsRNELT2ROcs1S+jkPV2z9KEJ5pFBYQ6e9bDvT6RkNgvpzG0wOk+uWJVRtm1bZxixJhQbbtwIlAz5Z9YzZx7wgCfBP0bhU5wiVf9xT5DKAsQWjWNSD2NO2zhkZUqZNQMWjvqtHN3kT0gk5R1oPT83ypuZ76AVoGBfPHfPtkqU39wcEyQOAHqOUR59tfpQWDWUxktmw3p8VOZpLhTESZPBN63sMRgvCBxd5Nd1o032XFQ=="],
+                "MIICozCCAYsCBgGSH2CBgjANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDDApjYXItcmVudGFsMB4XDTI0MDkyMzE0NTI1MVoXDTM0MDkyMzE0NTQzMVowFTETMBEGA1UEAwwKY2FyLXJlbnRhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMuFB8angaXPXosneMQp21a5Vwh9f7t75mInaHwaUuDtLoQgbonSdqmf8wUzJU22u8NvA8oieGmhS950RX26+oLEihS+2itYY523932P0sEj/sSGJZy/l8YGryWd++PL5sXISLSF+GhaTclymwhqXhqt+zzD07D4iEFx3bxbw7wCXNEqM29z4YD6+CcOIpB0dCuHtxC9/xB10FLBoiAcd4w2SOTIunHPOyNuB330QKJyhlH5PmbvurGUy/iBsM5K6p3tGtfoj0LfxKGSoNtYrijh3pHCMxJUW8DF5nDyiz06xfSEVqR3qG2aojds9GAWDKBqVJXZLRG8+B6AXlviqwkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAPACr490z5mCoT6uAp0tvEsR5Hqe4vj4e3dSAPk7jG5EB5n1SYvFHudsfmfwBwArLkDNywlIEFjGzVM7J9+JD0UHA3xP3XkkT7UdgDuKvbaCsRNELT2ROcs1S+jkPV2z9KEJ5pFBYQ6e9bDvT6RkNgvpzG0wOk+uWJVRtm1bZxixJhQbbtwIlAz5Z9YzZx7wgCfBP0bhU5wiVf9xT5DKAsQWjWNSD2NO2zhkZUqZNQMWjvqtHN3kT0gk5R1oPT83ypuZ76AVoGBfPHfPtkqU39wcEyQOAHqOUR59tfpQWDWUxktmw3p8VOZpLhTESZPBN63sMRgvCBxd5Nd1o032XFQ=="
+              ],
               "priority": [
                 "100"],
               "algorithm": [
@@ -2015,7 +2016,8 @@ data:
               "autheticatorFlow": true,
               "flowAlias": "Browser - Conditional OTP",
               "userSetupAllowed": false
-            }]
+            }
+          ]
         },
         {
           "id": "e7ef54fb-1fdc-443c-a688-183871751bbc",
@@ -2159,7 +2161,8 @@ data:
               "priority": 10,
               "autheticatorFlow": false,
               "userSetupAllowed": false
-            }]
+            }
+          ]
         }],
       "authenticatorConfig": [
         {
@@ -2670,7 +2673,7 @@ spec:
             - name: KAFKA_ZOOKEEPER_CONNECT
               value: zookeeper:2181
 
-# MySQL for battle service
+# MySQL for camp service
 ---
 apiVersion: v1
 kind: Service
@@ -2723,11 +2726,11 @@ metadata:
 data:
   prometheus.yml: |
     scrape_configs:
-      - job_name: 'camp-service'
+      - job_name: 'party-service'
         scrape_interval: 10s
         metrics_path: '/q/metrics'
         static_configs:
-          - targets: [ 'camp-service' ]
+          - targets: [ 'party-service' ]
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -2738,7 +2741,7 @@ data:
     apiVersion: 1
 
     providers:
-      - name: 'Camp service dashboard provider'
+      - name: 'Party service dashboard provider'
         orgId: 1
         type: file
         disableDeletion: false
@@ -2867,11 +2870,11 @@ data:
               },
               "editorMode": "builder",
               "exemplar": false,
-              "expr": "method_counted_total{method=\"register\"}",
-              "format": "table",
+              "expr": "method_counted_total{method=\"play\"}",
+              "format": "time_series",
               "instant": false,
               "legendFormat": "__auto",
-              "range": true,
+              "range": false,
               "refId": "A"
             }
           ],
@@ -3049,7 +3052,7 @@ data:
       },
       "timepicker": {},
       "timezone": "",
-      "title": "camp service",
+      "title": "Party service",
       "uid": "fe464455-bd12-4907-94f9-70fa45510ead",
       "version": 1,
       "weekStart": ""

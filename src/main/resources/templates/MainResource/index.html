@@ -1,6 +1,8 @@
-{@java.lang.String name}
+
+{! variabili usate dal template index definito nel nel server in MainResources.java !}
 {@java.lang.Integer won}
 {@java.lang.Integer lost}
+{@java.lang.String name}
 {@java.lang.Integer rank}
 
 <!DOCTYPE html>
@@ -167,7 +169,7 @@
 <main>
 
     <section id="gamez">
-        <img src="/images/quarkus-gate.png" alt="Quarkus Gate" width="90%" height="90%">
+        <img id="logo" src="/images/quarkus-gate.png" alt="Quarkus Gate" width="90%" height="90%">
         <p style="font-size:200%;">User: {name}</p>
         <p><a href="/quarkus-gate/exit" style="font-size: 28px">EXIT</a></p>
         <p style="font-size:200%;">Ranking: {rank}</p>
@@ -178,7 +180,13 @@
 
     <section id="partiez">
         <h2>Party</h2>
-        <div id="parties" hx-get="/quarkus-gate/get"
+        {! hx-get     - specifica la richiesta al server !}
+        {! hx-trigger - specifica quali eventi fanno scattare la richiesta in hx-get !}
+        {!              load - quando la pagina è caricata !}
+        {!              update-available-parties-list - evento custom !}
+        {!              update-all from:body - evento castom proveniente dal <body> del documento !}
+        <div id="parties"
+             hx-get="/quarkus-gate/get"
              hx-trigger="load, update-available-parties-list from:body, update-all from:body">
         </div>
         <div id="message-log"
@@ -192,8 +200,7 @@
     <section id="campz">
         <h2>Camp</h2>
         <div id="availability" hx-get="/quarkus-gate/available"
-             hx-trigger="load, update-available-heroes-list from:body, update-all from:body "
-             hx-include="">
+             hx-trigger="load, update-available-heroes-list from:body, update-all from:body ">
         </div>
     </section>
 
@@ -231,7 +238,7 @@
                 const messageLogDiv = document.getElementById("message-log");
                 messageLogDiv.scrollTop = messageLogDiv.scrollHeight;
 
-            }, 350);
+            }, 1200);
         } else {
             console.log("update from server ignored data=" + event.data);
         }
@@ -240,6 +247,31 @@
     eventSourceQG.onerror = function (error) {
         console.error("Errore receiving SSE events: ", error);
     };
+
+
+    function sendKeepAlive() {
+        fetch('/quarkus-gate/keepalive', {
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Richiesta keepalive inviata con successo.');
+                    document.getElementById('logo').style.filter = 'none';
+                } else {
+                    console.error('Errore durante la richiesta keepalive:', response.statusText);
+                    document.getElementById('logo').style.filter = 'grayscale(100%)';
+
+                }
+            })
+            .catch(error => {
+                console.error('Errore di rete durante la richiesta keepalive:', error);
+                document.getElementById('logo').style.filter = 'grayscale(100%)';
+            });
+    }
+
+
+    setInterval(sendKeepAlive, 15000);
+    sendKeepAlive();
 
 
 </script>

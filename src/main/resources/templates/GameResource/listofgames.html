@@ -1,6 +1,9 @@
 {@org.acme.users.model.Game[] games}
 {@java.lang.Boolean activeGame}
 
+{! hx-post   - definisce la richiesta al server quando viene inviato il form !}
+{! hx-target - definisce dove dovranno essere usati i dati della risposta !}
+{!             in questo caso nell'elemento con id=games nel index.html !}
 <form hx-post="/quarkus-gate/game/play" hx-target="#games">
     <input type="submit"  style="width: 80px; height: 80px; font-size: 28px" value="Play"  {#if activeGame} disabled {/if} '/>
 </form>
